@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 
-export default function TimeSelect({ value, options, onChange }) {
+export default function TimeSelect({ value, options, onChange, className = "" }) {
   const [open, setOpen] = useState(false);
   const ref = useRef(null);
 
@@ -14,7 +14,7 @@ export default function TimeSelect({ value, options, onChange }) {
   }, []);
 
   return (
-    <div className="time-select" ref={ref}>
+    <div className={`time-select ${className}`} ref={ref}>
       <button
         type="button"
         className="time-select-trigger"

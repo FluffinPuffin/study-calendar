@@ -138,6 +138,7 @@ export default function SessionModal({ editingSession, onClose }) {
               value={form.day}
               options={DAYS}
               onChange={(d) => setForm((prev) => ({ ...prev, day: d }))}
+              className="time-select--wide"
             />
           </div>
 

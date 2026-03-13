@@ -791,6 +791,10 @@ body {
   width: 72px;
 }
 
+.time-select--wide {
+  width: 140px;
+}
+
 .time-select-trigger {
   width: 100%;
   display: flex;
