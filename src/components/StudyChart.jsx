@@ -50,13 +50,13 @@ export default function StudyChart({ sessions }) {
         <BarChart data={data} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
           <XAxis
             dataKey="subject"
-            tick={{ fontSize: 12, fill: "var(--clr-text-muted)" }}
+            tick={{ fontSize: 12, fill: "#9d98b8" }}
             axisLine={false}
             tickLine={false}
           />
           <YAxis
             tickFormatter={formatMins}
-            tick={{ fontSize: 11, fill: "var(--clr-text-muted)" }}
+            tick={{ fontSize: 11, fill: "#9d98b8" }}
             axisLine={false}
             tickLine={false}
             width={48}
