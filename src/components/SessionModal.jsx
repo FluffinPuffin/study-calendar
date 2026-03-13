@@ -6,6 +6,9 @@ import { useSubjects } from "../hooks/useSubjects";
 
 const DAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
 
+const HOURS = Array.from({ length: 24 }, (_, i) => String(i).padStart(2, "0"));
+const MINUTES = ["00", "15", "30", "45"];
+
 const PRESET_COLORS = [
   "#4f46e5", // indigo
   "#0ea5e9", // sky blue
@@ -138,29 +141,38 @@ export default function SessionModal({ editingSession, onClose }) {
           {/* Start time + Duration side by side */}
           <div className="form-row">
             <div className="form-group">
-              <label htmlFor="startTime">Start time</label>
-              <input
-                id="startTime"
-                name="startTime"
-                type="time"
-                value={form.startTime}
-                onChange={handleChange}
-                required
-              />
+              <label>Start time</label>
+              <div className="time-picker">
+                <select
+                  value={form.startTime.split(":")[0]}
+                  onChange={(e) => setForm((prev) => ({ ...prev, startTime: `${e.target.value}:${prev.startTime.split(":")[1]}` }))}
+                >
+                  {HOURS.map((h) => <option key={h} value={h}>{h}</option>)}
+                </select>
+                <span className="time-colon">:</span>
+                <select
+                  value={form.startTime.split(":")[1]}
+                  onChange={(e) => setForm((prev) => ({ ...prev, startTime: `${prev.startTime.split(":")[0]}:${e.target.value}` }))}
+                >
+                  {MINUTES.map((m) => <option key={m} value={m}>{m}</option>)}
+                </select>
+              </div>
             </div>
             <div className="form-group">
-              <label htmlFor="duration">Duration (min)</label>
-              <input
-                id="duration"
-                name="duration"
-                type="number"
-                min="15"
-                max="480"
-                step="15"
-                value={form.duration}
-                onChange={handleChange}
-                required
-              />
+              <label>Duration (min)</label>
+              <div className="duration-picker">
+                <button
+                  type="button"
+                  className="duration-btn"
+                  onClick={() => setForm((prev) => ({ ...prev, duration: Math.max(15, prev.duration - 15) }))}
+                >−</button>
+                <span className="duration-value">{form.duration}</span>
+                <button
+                  type="button"
+                  className="duration-btn"
+                  onClick={() => setForm((prev) => ({ ...prev, duration: Math.min(480, prev.duration + 15) }))}
+                >+</button>
+              </div>
             </div>
           </div>
 

@@ -709,6 +709,83 @@ body {
   gap: 0.75rem;
 }
 
+/* ── Custom time picker ── */
+.time-picker {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.time-picker select {
+  padding: 0.6rem 0.5rem;
+  background: var(--clr-surface);
+  color: var(--clr-text);
+  border: 1.5px solid var(--clr-border);
+  border-radius: 8px;
+  font-size: 1rem;
+  font-family: inherit;
+  cursor: pointer;
+  outline: none;
+  appearance: none;
+  text-align: center;
+  width: 64px;
+}
+
+.time-picker select:focus {
+  border-color: var(--clr-primary);
+}
+
+.time-picker option {
+  background: var(--clr-surface);
+  color: var(--clr-text);
+}
+
+.time-colon {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--clr-text);
+  padding: 0 2px;
+}
+
+/* ── Duration picker ── */
+.duration-picker {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  border: 1.5px solid var(--clr-border);
+  border-radius: 8px;
+  overflow: hidden;
+  width: fit-content;
+}
+
+.duration-btn {
+  background: var(--clr-surface);
+  color: var(--clr-text);
+  border: none;
+  padding: 0.6rem 0.9rem;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+  line-height: 1;
+}
+
+.duration-btn:hover {
+  background: var(--clr-primary);
+  color: #fff;
+}
+
+.duration-value {
+  background: var(--clr-surface);
+  color: var(--clr-text);
+  font-size: 1rem;
+  font-family: inherit;
+  min-width: 52px;
+  text-align: center;
+  padding: 0.6rem 0.25rem;
+  border-left: 1.5px solid var(--clr-border);
+  border-right: 1.5px solid var(--clr-border);
+}
+
 .modal-form select,
 .modal-form textarea {
   padding: 0.6rem 0.85rem;
