@@ -133,10 +133,12 @@ export default function SessionModal({ editingSession, onClose }) {
 
           {/* Day */}
           <div className="form-group">
-            <label htmlFor="day">Day</label>
-            <select id="day" name="day" value={form.day} onChange={handleChange}>
-              {DAYS.map((d) => <option key={d} value={d}>{d}</option>)}
-            </select>
+            <label>Day</label>
+            <TimeSelect
+              value={form.day}
+              options={DAYS}
+              onChange={(d) => setForm((prev) => ({ ...prev, day: d }))}
+            />
           </div>
 
           {/* Start time + Duration side by side */}
