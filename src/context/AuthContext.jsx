@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import { onAuthStateChanged, signOut } from "firebase/auth";
+import { onAuthStateChanged, signOut, updateProfile } from "firebase/auth";
 import { auth } from "../firebase/config";
 
 const AuthContext = createContext(null);
@@ -23,8 +23,13 @@ export function AuthProvider({ children }) {
     return signOut(auth);
   }
 
+  async function updateDisplayName(name) {
+    await updateProfile(auth.currentUser, { displayName: name });
+    setUser(Object.assign(Object.create(Object.getPrototypeOf(auth.currentUser)), auth.currentUser)); // force re-render with updated name
+  }
+
   return (
-    <AuthContext.Provider value={{ user, loading, logout }}>
+    <AuthContext.Provider value={{ user, loading, logout, updateDisplayName }}>
       {!loading && children}
     </AuthContext.Provider>
   );

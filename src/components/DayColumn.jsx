@@ -1,6 +1,9 @@
+import { useDroppable } from "@dnd-kit/core";
 import SessionCard from "./SessionCard";
 
 export default function DayColumn({ day, sessions, onEdit, onDelete, onToggleComplete }) {
+  const { setNodeRef, isOver } = useDroppable({ id: day });
+
   return (
     <div className="day-column">
 
@@ -11,7 +14,10 @@ export default function DayColumn({ day, sessions, onEdit, onDelete, onToggleCom
         </span>
       </div>
 
-      <div className="day-sessions">
+      <div
+        ref={setNodeRef}
+        className={`day-sessions ${isOver ? "day-sessions--over" : ""}`}
+      >
         {sessions.length === 0 ? (
           <p className="day-empty">—</p>
         ) : (
