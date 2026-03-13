@@ -3,6 +3,7 @@ import { useAuth } from "../context/AuthContext";
 import { addSession, updateSession } from "../firebase/sessions";
 import { upsertSubject } from "../firebase/subjects";
 import { useSubjects } from "../hooks/useSubjects";
+import TimeSelect from "./TimeSelect";
 
 const DAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
 
@@ -143,19 +144,17 @@ export default function SessionModal({ editingSession, onClose }) {
             <div className="form-group">
               <label>Start time</label>
               <div className="time-picker">
-                <select
+                <TimeSelect
                   value={form.startTime.split(":")[0]}
-                  onChange={(e) => setForm((prev) => ({ ...prev, startTime: `${e.target.value}:${prev.startTime.split(":")[1]}` }))}
-                >
-                  {HOURS.map((h) => <option key={h} value={h}>{h}</option>)}
-                </select>
+                  options={HOURS}
+                  onChange={(h) => setForm((prev) => ({ ...prev, startTime: `${h}:${prev.startTime.split(":")[1]}` }))}
+                />
                 <span className="time-colon">:</span>
-                <select
+                <TimeSelect
                   value={form.startTime.split(":")[1]}
-                  onChange={(e) => setForm((prev) => ({ ...prev, startTime: `${prev.startTime.split(":")[0]}:${e.target.value}` }))}
-                >
-                  {MINUTES.map((m) => <option key={m} value={m}>{m}</option>)}
-                </select>
+                  options={MINUTES}
+                  onChange={(m) => setForm((prev) => ({ ...prev, startTime: `${prev.startTime.split(":")[0]}:${m}` }))}
+                />
               </div>
             </div>
             <div className="form-group">

@@ -7,6 +7,7 @@ import { updateSession, deleteSession } from "../firebase/sessions";
 import StudyChart from "../components/StudyChart";
 import ProfileModal from "../components/ProfileModal";
 import { DndContext, PointerSensor, useSensor, useSensors } from "@dnd-kit/core";
+import FilterSelect from "../components/FilterSelect";
 
 export default function CalendarApp() {
   const { user, logout } = useAuth();
@@ -145,16 +146,12 @@ export default function CalendarApp() {
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
-            <select
-              className="filter-select"
+            <FilterSelect
               value={filterSubject}
-              onChange={(e) => setFilterSubject(e.target.value)}
-            >
-              <option value="">All subjects</option>
-              {subjects.map((s) => (
-                <option key={s} value={s}>{s}</option>
-              ))}
-            </select>
+              options={subjects}
+              placeholder="All subjects"
+              onChange={setFilterSubject}
+            />
             {(search || filterSubject) && (
               <button
                 className="filter-clear"
