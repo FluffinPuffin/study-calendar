@@ -28,9 +28,10 @@ const EMPTY_FORM = {
   duration: 60,
   notes: "",
   color: "#4f46e5",
+  recurring: false,
 };
 
-export default function SessionModal({ editingSession, onClose }) {
+export default function SessionModal({ editingSession, weekStart, onClose }) {
   const { user } = useAuth();
   const subjects = useSubjects();
   const [form, setForm] = useState(EMPTY_FORM);
@@ -47,6 +48,7 @@ export default function SessionModal({ editingSession, onClose }) {
         duration:  editingSession.duration  || 60,
         notes:     editingSession.notes     || "",
         color:     editingSession.color     || "#4f46e5",
+        recurring: editingSession.recurring || false,
       });
     } else {
       setForm(EMPTY_FORM);
@@ -54,10 +56,10 @@ export default function SessionModal({ editingSession, onClose }) {
   }, [editingSession]);
 
   function handleChange(e) {
-    const { name, value } = e.target;
+    const { name, value, type, checked } = e.target;
     setForm((prev) => ({
       ...prev,
-      [name]: name === "duration" ? Number(value) : value,
+      [name]: type === "checkbox" ? checked : name === "duration" ? Number(value) : value,
     }));
   }
 
@@ -81,7 +83,7 @@ export default function SessionModal({ editingSession, onClose }) {
       if (editingSession) {
         await updateSession(user.uid, editingSession.id, form);
       } else {
-        await addSession(user.uid, form);
+        await addSession(user.uid, { ...form, weekStart: form.recurring ? null : weekStart });
       }
       onClose();
     } catch (err) {
@@ -194,6 +196,17 @@ export default function SessionModal({ editingSession, onClose }) {
               ))}
             </div>
           </div>
+
+          {/* Recurring */}
+          <label className="recurring-label">
+            <input
+              type="checkbox"
+              name="recurring"
+              checked={form.recurring}
+              onChange={handleChange}
+            />
+            Repeat every week
+          </label>
 
           {/* Notes */}
           <div className="form-group">

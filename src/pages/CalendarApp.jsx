@@ -8,10 +8,16 @@ import StudyChart from "../components/StudyChart";
 import ProfileModal from "../components/ProfileModal";
 import { DndContext, PointerSensor, useSensor, useSensors } from "@dnd-kit/core";
 import FilterSelect from "../components/FilterSelect";
+import { getWeekStart, getWeekLabel } from "../utils/weeks";
+
+const WEEK_LIMIT = 4;
 
 export default function CalendarApp() {
   const { user, logout } = useAuth();
-  const { sessions, loading } = useSessions();
+  const [weekOffset, setWeekOffset] = useState(0);
+  const weekStart = getWeekStart(weekOffset);
+  const weekLabel = getWeekLabel(weekOffset);
+  const { sessions, loading } = useSessions(weekStart);
   const [editingSession, setEditingSession] = useState(null);
   const [addMode, setAddMode] = useState(false);
   const [actionError, setActionError] = useState("");
@@ -39,7 +45,15 @@ export default function CalendarApp() {
 
   async function handleToggleComplete(session) {
     try {
-      await updateSession(user.uid, session.id, { completed: !session.completed });
+      if (session.recurring) {
+        const weeks = session.completedWeeks || [];
+        const updatedWeeks = session.completed
+          ? weeks.filter((w) => w !== weekStart)
+          : [...weeks, weekStart];
+        await updateSession(user.uid, session.id, { completedWeeks: updatedWeeks });
+      } else {
+        await updateSession(user.uid, session.id, { completed: !session.completed });
+      }
     } catch {
       setActionError("Could not update session. Check your connection and try again.");
     }
@@ -58,7 +72,13 @@ export default function CalendarApp() {
     const incomplete = sessions.filter((s) => !s.completed);
     if (incomplete.length === 0) return;
     try {
-      await Promise.all(incomplete.map((s) => updateSession(user.uid, s.id, { completed: true })));
+      await Promise.all(incomplete.map((s) => {
+        if (s.recurring) {
+          const updatedWeeks = [...(s.completedWeeks || []), weekStart];
+          return updateSession(user.uid, s.id, { completedWeeks: updatedWeeks });
+        }
+        return updateSession(user.uid, s.id, { completed: true });
+      }));
     } catch {
       setActionError("Could not mark all complete. Check your connection and try again.");
     }
@@ -67,7 +87,10 @@ export default function CalendarApp() {
   async function handleClearWeek() {
     if (!window.confirm("Delete all sessions this week? This cannot be undone.")) return;
     try {
-      await Promise.all(sessions.map((s) => deleteSession(user.uid, s.id)));
+      // Skip recurring sessions — deleting their document would remove them from every week
+      await Promise.all(
+        sessions.filter((s) => !s.recurring).map((s) => deleteSession(user.uid, s.id))
+      );
     } catch {
       setActionError("Could not clear week. Check your connection and try again.");
     }
@@ -119,7 +142,25 @@ export default function CalendarApp() {
 
           {/* Top bar */}
           <div className="app-topbar">
-            <h2 className="week-title">This Week</h2>
+            <div className="week-nav">
+              <button
+                className="btn btn-sm btn-ghost week-nav-arrow"
+                onClick={() => { setWeekOffset((o) => o - 1); setSearch(""); setFilterSubject(""); }}
+                disabled={weekOffset <= -WEEK_LIMIT}
+                aria-label="Previous week"
+              >
+                &#8249;
+              </button>
+              <h2 className="week-title">{weekLabel}</h2>
+              <button
+                className="btn btn-sm btn-ghost week-nav-arrow"
+                onClick={() => { setWeekOffset((o) => o + 1); setSearch(""); setFilterSubject(""); }}
+                disabled={weekOffset >= WEEK_LIMIT}
+                aria-label="Next week"
+              >
+                &#8250;
+              </button>
+            </div>
             <button className="btn" onClick={() => setAddMode(true)}>
               + Add Session
             </button>
@@ -225,6 +266,7 @@ export default function CalendarApp() {
       {showModal && (
         <SessionModal
           editingSession={editingSession}
+          weekStart={weekStart}
           onClose={handleCloseModal}
         />
       )}
